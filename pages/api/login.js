@@ -43,3 +43,9 @@ export default async (req, res) => {
     res.status(404).send("Server error: " + e.message);
   }
 };
+
+export const config = {
+  api: {
+    bodyParser: process.env.NODE_ENV !== "production",
+  },
+};

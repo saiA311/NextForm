@@ -31,3 +31,9 @@ export default async (req, res) => {
     res.status(400).send("User creation unsuccessful");
   }
 };
+
+export const config = {
+  api: {
+    bodyParser: process.env.NODE_ENV !== "production",
+  },
+};
