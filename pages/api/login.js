@@ -15,7 +15,8 @@ export default async (req, res) => {
   const usernamevalidator = await User.findOne({
     username: req.body.email,
   });
-  console.log(req)
+  console.log(req);
+  res.status(200).send(req);
   /* try {
     if (emailvalidator) {
       const validPassword = await bcrypt.compare(
