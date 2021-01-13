@@ -15,7 +15,8 @@ export default async (req, res) => {
   const usernamevalidator = await User.findOne({
     username: req.body.email,
   });
-  try {
+  console.log(req)
+  /* try {
     if (emailvalidator) {
       const validPassword = await bcrypt.compare(
         req.body.password,
@@ -47,5 +48,5 @@ export default async (req, res) => {
 export const config = {
   api: {
     bodyParser: process.env.NODE_ENV !== "production",
-  },
+  }, */
 };
