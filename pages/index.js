@@ -1,65 +1,71 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
-
+import styles from "../styles/Home.module.css";
+import { Button, TextField } from "@material-ui/core";
+import { useState } from "react";
+import jwt from "jsonwebtoken";
+import { useStateValue } from "../components/StateProvider";
+import { useRouter } from "next/router";
+import Header from "../components/Header";
+import axios from "axios";
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [{ jwts, username }, dispatch] = useStateValue();
+  const router = useRouter();
+  const SubmitHandeler = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await axios.post("/api/login", {
+        email: email,
+        password: password,
+      });
+      const json = jwt.decode(data.data.token);
+      dispatch({
+        type: "ADD_TOKEN",
+        item: {
+          jsonwt: data.data.token,
+          username: json.User.username,
+        },
+      });
+      alert("welcome user " + json.User.username);
+      router.push("/Profile");
+    } catch (error) {
+      alert("authentication error: invalid user or password");
+    }
+  };
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <Header
+        path="/Register"
+        direction="For Register"
+        style={styles.app_header}
+      />
+      <div className={styles.login}>
+        <div className={styles.login_form_container}>
+          <form onSubmit={SubmitHandeler}>
+            <TextField
+              id="email"
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              label="email"
+              type="text"
+              variant="outlined"
+              required
+            />
+            <TextField
+              id="password"
+              label="password"
+              type="password"
+              variant="outlined"
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              required
+            />
+            <Button variant="outlined" onClick={SubmitHandeler} color="primary">
+              Login
+            </Button>
+          </form>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      </div>
     </div>
-  )
+  );
 }
